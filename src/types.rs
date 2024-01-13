@@ -124,156 +124,194 @@ pub enum GatewaySendEvent {
         activities: Option<Vec<GatewayActivity>>,
         status: String,
         afk: bool,
-    }
+    },
 }
 
 impl GatewaySendEvent {
     pub fn to_json_bytes(&self) -> Vec<u8> {
         match self {
             // Convert to JSON
-            GatewaySendEvent::Identify { token, properties, compress, large_threshold, shard, presence, guild_subscriptions, intents } => {
-                serde_json::json!({
-                    "op": 2,
-                    "d": {
-                        "token": token,
-                        "properties": properties,
-                        "compress": compress.unwrap_or(false),
-                        "large_threshold": large_threshold.unwrap_or(50),
-                        "shard": shard.unwrap_or([0, 1]),
-                        "presence": presence,
-                        "guild_subscriptions": guild_subscriptions,
-                        "intents": intents,
-                    },
-                }).to_string().as_bytes().to_vec()
-            },
-            GatewaySendEvent::Resume { token, session_id, seq } => {
-                serde_json::json!({
-                    "op": 6,
-                    "d": {
-                        "token": token,
-                        "session_id": session_id,
-                        "seq": seq,
-                    },
-                }).to_string().as_bytes().to_vec()
-            },
-            GatewaySendEvent::Heartbeat { seq } => {
-                serde_json::json!({
-                    "op": 1,
-                    "d": seq,
-                }).to_string().as_bytes().to_vec()
-            },
-            GatewaySendEvent::RequestGuildMembers { guild_id, query, limit, presences, user_ids, nonce } => {
-                serde_json::json!({
-                    "op": 8,
-                    "d": {
-                        "guild_id": guild_id,
-                        "query": query,
-                        "limit": limit,
-                        "presences": presences,
-                        "user_ids": user_ids,
-                        "nonce": nonce,
-                    },
-                }).to_string().as_bytes().to_vec()
-            },
-            GatewaySendEvent::UpdateVoiceState { guild_id, channel_id, self_mute, self_deaf } => {
-                serde_json::json!({
-                    "op": 4,
-                    "d": {
-                        "guild_id": guild_id,
-                        "channel_id": channel_id,
-                        "self_mute": self_mute,
-                        "self_deaf": self_deaf,
-                    },
-                }).to_string().as_bytes().to_vec()
-            },
-            GatewaySendEvent::UpdatePresence { since, activities, status, afk } => {
-                serde_json::json!({
-                    "op": 3,
-                    "d": {
-                        "since": since,
-                        "activities": activities,
-                        "status": status,
-                        "afk": afk,
-                    },
-                }).to_string().as_bytes().to_vec()
-            },
+            GatewaySendEvent::Identify {
+                token,
+                properties,
+                compress,
+                large_threshold,
+                shard,
+                presence,
+                guild_subscriptions,
+                intents,
+            } => serde_json::json!({
+                "op": 2,
+                "d": {
+                    "token": token,
+                    "properties": properties,
+                    "compress": compress.unwrap_or(false),
+                    "large_threshold": large_threshold.unwrap_or(50),
+                    "shard": shard.unwrap_or([0, 1]),
+                    "presence": presence,
+                    "guild_subscriptions": guild_subscriptions,
+                    "intents": intents,
+                },
+            })
+            .to_string()
+            .as_bytes()
+            .to_vec(),
+            GatewaySendEvent::Resume {
+                token,
+                session_id,
+                seq,
+            } => serde_json::json!({
+                "op": 6,
+                "d": {
+                    "token": token,
+                    "session_id": session_id,
+                    "seq": seq,
+                },
+            })
+            .to_string()
+            .as_bytes()
+            .to_vec(),
+            GatewaySendEvent::Heartbeat { seq } => serde_json::json!({
+                "op": 1,
+                "d": seq,
+            })
+            .to_string()
+            .as_bytes()
+            .to_vec(),
+            GatewaySendEvent::RequestGuildMembers {
+                guild_id,
+                query,
+                limit,
+                presences,
+                user_ids,
+                nonce,
+            } => serde_json::json!({
+                "op": 8,
+                "d": {
+                    "guild_id": guild_id,
+                    "query": query,
+                    "limit": limit,
+                    "presences": presences,
+                    "user_ids": user_ids,
+                    "nonce": nonce,
+                },
+            })
+            .to_string()
+            .as_bytes()
+            .to_vec(),
+            GatewaySendEvent::UpdateVoiceState {
+                guild_id,
+                channel_id,
+                self_mute,
+                self_deaf,
+            } => serde_json::json!({
+                "op": 4,
+                "d": {
+                    "guild_id": guild_id,
+                    "channel_id": channel_id,
+                    "self_mute": self_mute,
+                    "self_deaf": self_deaf,
+                },
+            })
+            .to_string()
+            .as_bytes()
+            .to_vec(),
+            GatewaySendEvent::UpdatePresence {
+                since,
+                activities,
+                status,
+                afk,
+            } => serde_json::json!({
+                "op": 3,
+                "d": {
+                    "since": since,
+                    "activities": activities,
+                    "status": status,
+                    "afk": afk,
+                },
+            })
+            .to_string()
+            .as_bytes()
+            .to_vec(),
         }
     }
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub enum GatewayEventType {
-  Ready,
-  Resumed,
-  ApplicationCommandPermissionsUpdate,
-  AutoModerationRuleCreate,
-  AutoModerationRuleUpdate,
-  AutoModerationRuleDelete,
-  AutoModerationActionExecution,
-  ChannelCreate,
-  ChannelUpdate,
-  ChannelDelete,
-  ChannelPinsUpdate,
-  ThreadCreate,
-  ThreadUpdate,
-  ThreadDelete,
-  ThreadListSync,
-  ThreadMemberUpdate,
-  ThreadMembersUpdate,
-  EntitlementCreate,
-  EntitlementUpdate,
-  EntitlementDelete,
-  GuildCreate,
-  GuildUpdate,
-  GuildDelete,
-  GuildAuditLogEntryCreate,
-  GuildBanAdd,
-  GuildBanRemove,
-  GuildEmojisUpdate,
-  GuildStickersUpdate,
-  GuildIntegrationsUpdate,
-  GuildMemberAdd,
-  GuildMemberRemove,
-  GuildMemberUpdate,
-  GuildMembersChunk,
-  GuildRoleCreate,
-  GuildRoleUpdate,
-  GuildRoleDelete,
-  GuildScheduledEventCreate,
-  GuildScheduledEventUpdate,
-  GuildScheduledEventDelete,
-  GuildScheduledEventUserAdd,
-  GuildScheduledEventUserRemove,
-  IntegrationCreate,
-  IntegrationUpdate,
-  IntegrationDelete,
-  InteractionCreate,
-  InviteCreate,
-  InviteDelete,
-  MessageCreate,
-  MessageUpdate,
-  MessageDelete,
-  MessageDeleteBulk,
-  MessageReactionAdd,
-  MessageReactionRemove,
-  MessageReactionRemoveAll,
-  MessageReactionRemoveEmoji,
-  PresenceUpdate,
-  StageInstanceCreate,
-  StageInstanceUpdate,
-  StageInstanceDelete,
-  TypingStart,
-  UserUpdate,
-  VoiceStateUpdate,
-  VoiceServerUpdate,
-  WebhooksUpdate,
+    Ready,
+    Resumed,
+    ApplicationCommandPermissionsUpdate,
+    AutoModerationRuleCreate,
+    AutoModerationRuleUpdate,
+    AutoModerationRuleDelete,
+    AutoModerationActionExecution,
+    ChannelCreate,
+    ChannelUpdate,
+    ChannelDelete,
+    ChannelPinsUpdate,
+    ThreadCreate,
+    ThreadUpdate,
+    ThreadDelete,
+    ThreadListSync,
+    ThreadMemberUpdate,
+    ThreadMembersUpdate,
+    EntitlementCreate,
+    EntitlementUpdate,
+    EntitlementDelete,
+    GuildCreate,
+    GuildUpdate,
+    GuildDelete,
+    GuildAuditLogEntryCreate,
+    GuildBanAdd,
+    GuildBanRemove,
+    GuildEmojisUpdate,
+    GuildStickersUpdate,
+    GuildIntegrationsUpdate,
+    GuildMemberAdd,
+    GuildMemberRemove,
+    GuildMemberUpdate,
+    GuildMembersChunk,
+    GuildRoleCreate,
+    GuildRoleUpdate,
+    GuildRoleDelete,
+    GuildScheduledEventCreate,
+    GuildScheduledEventUpdate,
+    GuildScheduledEventDelete,
+    GuildScheduledEventUserAdd,
+    GuildScheduledEventUserRemove,
+    IntegrationCreate,
+    IntegrationUpdate,
+    IntegrationDelete,
+    InteractionCreate,
+    InviteCreate,
+    InviteDelete,
+    MessageCreate,
+    MessageUpdate,
+    MessageDelete,
+    MessageDeleteBulk,
+    MessageReactionAdd,
+    MessageReactionRemove,
+    MessageReactionRemoveAll,
+    MessageReactionRemoveEmoji,
+    PresenceUpdate,
+    StageInstanceCreate,
+    StageInstanceUpdate,
+    StageInstanceDelete,
+    TypingStart,
+    UserUpdate,
+    VoiceStateUpdate,
+    VoiceServerUpdate,
+    WebhooksUpdate,
 }
 
 impl GatewayEventType {
     pub fn from_str(s: &str) -> Option<Self> {
         match s.to_uppercase().as_str() {
             "READY" => Some(Self::Ready),
-            "APPLICATION_COMMAND_PERMISSIONS_UPDATE" => Some(Self::ApplicationCommandPermissionsUpdate),
+            "APPLICATION_COMMAND_PERMISSIONS_UPDATE" => {
+                Some(Self::ApplicationCommandPermissionsUpdate)
+            }
             "AUTOMODERATION_RULE_CREATE" => Some(Self::AutoModerationRuleCreate),
             "AUTOMODERATION_RULE_UPDATE" => Some(Self::AutoModerationRuleUpdate),
             "AUTOMODERATION_RULE_DELETE" => Some(Self::AutoModerationRuleDelete),
@@ -427,11 +465,11 @@ pub struct RoleTags {
     pub subscription_listing_id: Option<String>,
     pub premium_subscriber: Option<bool>, // will need to figure out how to handle
     pub available_for_purchase: Option<bool>, // will need to figure out how to handle
-    pub guild_connections: Option<bool>, // will need to figure out how to handle
+    pub guild_connections: Option<bool>,  // will need to figure out how to handle
 
-    // premium_subscriber?    null    whether this is the guild's Booster role
-    // available_for_purchase?    null    whether this role is available for purchase
-    // guild_connections?    null    whether this role is a guild's linked role
+                                          // premium_subscriber?    null    whether this is the guild's Booster role
+                                          // available_for_purchase?    null    whether this role is available for purchase
+                                          // guild_connections?    null    whether this role is a guild's linked role
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -720,7 +758,6 @@ pub struct AutoModerationCondition {
     pub match_parameters: Vec<String>,
 }
 
-
 // Structs
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Hello {
@@ -987,9 +1024,9 @@ pub struct GuildScheduledEvent {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct GuildScheduledEventUser {
-  pub guild_scheduled_event_id: String,
-  pub user_id: String,
-  pub guild_id: String,
+    pub guild_scheduled_event_id: String,
+    pub user_id: String,
+    pub guild_id: String,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -1147,10 +1184,10 @@ pub struct StickerItem {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct RoleSubscriptionData {
-  pub role_subscription_listing_id: String,
-  pub tier_name: String,
-  pub total_months_subscribed: u64,
-  pub is_renewal: bool,
+    pub role_subscription_listing_id: String,
+    pub tier_name: String,
+    pub total_months_subscribed: u64,
+    pub is_renewal: bool,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -1194,176 +1231,176 @@ pub struct Message {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct ResolvedData {
-  pub users: Option<HashMap<String, User>>,
-  pub members: Option<HashMap<String, GuildMember>>,
-  pub roles: Option<HashMap<String, Role>>,
-  pub channels: Option<HashMap<String, Channel>>,
-  pub messages: Option<HashMap<String, Message>>,
-  pub attachments: Option<HashMap<String, Attachment>>,
+    pub users: Option<HashMap<String, User>>,
+    pub members: Option<HashMap<String, GuildMember>>,
+    pub roles: Option<HashMap<String, Role>>,
+    pub channels: Option<HashMap<String, Channel>>,
+    pub messages: Option<HashMap<String, Message>>,
+    pub attachments: Option<HashMap<String, Attachment>>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct ApplicationCommandInteractionDataOption {
-  pub name: String,
-  #[serde(rename = "type")]
-  pub option_type: u32,
-  pub value: Option<serde_json::Value>,
-  pub options: Option<Vec<ApplicationCommandInteractionDataOption>>,
-  pub focused: Option<bool>,
+    pub name: String,
+    #[serde(rename = "type")]
+    pub option_type: u32,
+    pub value: Option<serde_json::Value>,
+    pub options: Option<Vec<ApplicationCommandInteractionDataOption>>,
+    pub focused: Option<bool>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct InteractionData {
-  pub id: String,
-  pub name: String,
-  #[serde(rename = "type")]
-  pub interaction_type: u32,
-  pub resolved: Option<ResolvedData>,
-  pub options: Option<Vec<ApplicationCommandInteractionDataOption>>,
-  pub guild_id: Option<String>,
-  pub target_id: Option<String>,
+    pub id: String,
+    pub name: String,
+    #[serde(rename = "type")]
+    pub interaction_type: u32,
+    pub resolved: Option<ResolvedData>,
+    pub options: Option<Vec<ApplicationCommandInteractionDataOption>>,
+    pub guild_id: Option<String>,
+    pub target_id: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Interaction {
-  pub id: String,
-  pub application_id: String,
-  #[serde(rename = "type")]
-  pub interaction_type: u32,
-  pub data: Option<InteractionData>,
-  pub guild_id: Option<String>,
-  pub channel_id: Option<String>,
-  pub member: Option<GuildMember>,
-  pub user: Option<User>,
-  pub token: String,
-  pub version: u32,
-  pub message: Option<Message>,
-  pub app_permissions: Option<String>,
-  pub locale: Option<String>,
-  pub guild_locale: Option<String>,
-  pub entitlements: Option<Vec<Entitlement>>,
+    pub id: String,
+    pub application_id: String,
+    #[serde(rename = "type")]
+    pub interaction_type: u32,
+    pub data: Option<InteractionData>,
+    pub guild_id: Option<String>,
+    pub channel_id: Option<String>,
+    pub member: Option<GuildMember>,
+    pub user: Option<User>,
+    pub token: String,
+    pub version: u32,
+    pub message: Option<Message>,
+    pub app_permissions: Option<String>,
+    pub locale: Option<String>,
+    pub guild_locale: Option<String>,
+    pub entitlements: Option<Vec<Entitlement>>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct InviteCreate {
-  pub channel_id: String,
-  pub code: String,
-  pub created_at: String,
-  pub guild_id: Option<String>,
-  pub inviter: Option<User>,
-  pub max_age: Option<u64>,
-  pub max_uses: Option<u64>,
-  pub target_type: Option<u32>,
-  pub target_user: Option<User>,
-  pub target_application: Option<Application>,
-  pub temporary: Option<bool>,
-  pub uses: Option<u64>,
+    pub channel_id: String,
+    pub code: String,
+    pub created_at: String,
+    pub guild_id: Option<String>,
+    pub inviter: Option<User>,
+    pub max_age: Option<u64>,
+    pub max_uses: Option<u64>,
+    pub target_type: Option<u32>,
+    pub target_user: Option<User>,
+    pub target_application: Option<Application>,
+    pub temporary: Option<bool>,
+    pub uses: Option<u64>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct InviteDelete {
-  pub channel_id: String,
-  pub guild_id: Option<String>,
-  pub code: String,
+    pub channel_id: String,
+    pub guild_id: Option<String>,
+    pub code: String,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct MessageDelete {
-  pub id: String,
-  pub channel_id: String,
-  pub guild_id: Option<String>,
+    pub id: String,
+    pub channel_id: String,
+    pub guild_id: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct MessageDeleteBulk {
-  pub ids: Vec<String>,
-  pub channel_id: String,
-  pub guild_id: Option<String>,
+    pub ids: Vec<String>,
+    pub channel_id: String,
+    pub guild_id: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct MessageReactionAdd {
-  pub user_id: String,
-  pub channel_id: String,
-  pub message_id: String,
-  pub guild_id: Option<String>,
-  pub member: Option<GuildMember>,
-  pub emoji: Emoji,
-  pub message_author_id: Option<String>,
+    pub user_id: String,
+    pub channel_id: String,
+    pub message_id: String,
+    pub guild_id: Option<String>,
+    pub member: Option<GuildMember>,
+    pub emoji: Emoji,
+    pub message_author_id: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct MessageReactionRemove {
-  pub user_id: String,
-  pub channel_id: String,
-  pub message_id: String,
-  pub guild_id: Option<String>,
-  pub emoji: Emoji,
+    pub user_id: String,
+    pub channel_id: String,
+    pub message_id: String,
+    pub guild_id: Option<String>,
+    pub emoji: Emoji,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct MessageReactionRemoveAll {
-  pub channel_id: String,
-  pub message_id: String,
-  pub guild_id: Option<String>,
+    pub channel_id: String,
+    pub message_id: String,
+    pub guild_id: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct MessageReactionRemoveEmoji {
-  pub channel_id: String,
-  pub guild_id: Option<String>,
-  pub message_id: String,
-  pub emoji: Emoji,
+    pub channel_id: String,
+    pub guild_id: Option<String>,
+    pub message_id: String,
+    pub emoji: Emoji,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct TypingStart {
-  pub channel_id: String,
-  pub guild_id: Option<String>,
-  pub user_id: String,
-  pub timestamp: u64,
-  pub member: Option<GuildMember>,
+    pub channel_id: String,
+    pub guild_id: Option<String>,
+    pub user_id: String,
+    pub timestamp: u64,
+    pub member: Option<GuildMember>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct VoiceState {
-  pub guild_id: Option<String>,
-  pub channel_id: Option<String>,
-  pub user_id: String,
-  pub member: Option<GuildMember>,
-  pub session_id: String,
-  pub deaf: bool,
-  pub mute: bool,
-  pub self_deaf: bool,
-  pub self_mute: bool,
-  pub self_stream: Option<bool>,
-  pub self_video: bool,
-  pub suppress: bool,
-  pub request_to_speak_timestamp: Option<String>,
+    pub guild_id: Option<String>,
+    pub channel_id: Option<String>,
+    pub user_id: String,
+    pub member: Option<GuildMember>,
+    pub session_id: String,
+    pub deaf: bool,
+    pub mute: bool,
+    pub self_deaf: bool,
+    pub self_mute: bool,
+    pub self_stream: Option<bool>,
+    pub self_video: bool,
+    pub suppress: bool,
+    pub request_to_speak_timestamp: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct VoiceServerUpdate {
-  pub token: String,
-  pub guild_id: String,
-  pub endpoint: Option<String>,
+    pub token: String,
+    pub guild_id: String,
+    pub endpoint: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct WebhooksUpdate {
-  pub guild_id: String,
-  pub channel_id: String,
+    pub guild_id: String,
+    pub channel_id: String,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct StageInstance {
-  pub id: String,
-  pub guild_id: String,
-  pub channel_id: String,
-  pub topic: String,
-  pub privacy_level: u32,
-  pub discoverable_disabled: bool,
-  pub guild_scheduled_event_id: Option<String>,
+    pub id: String,
+    pub guild_id: String,
+    pub channel_id: String,
+    pub topic: String,
+    pub privacy_level: u32,
+    pub discoverable_disabled: bool,
+    pub guild_scheduled_event_id: Option<String>,
 }
 
 // HTTP API:
@@ -1373,48 +1410,48 @@ pub struct StageInstance {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct GuildChannelUpdate {
-  pub id: String,
-  pub position: Option<u32>,
-  pub parent_id: Option<String>,
-  pub lock_permissions: Option<bool>,
+    pub id: String,
+    pub position: Option<u32>,
+    pub parent_id: Option<String>,
+    pub lock_permissions: Option<bool>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct GuildChannel {
-  pub name: String,
-  #[serde(rename = "type")]
-  pub channel_type: Option<String>,
-  pub position: Option<i32>,
-  pub topic: Option<String>,
-  pub bitrate: Option<i32>,
-  pub user_limit: Option<i32>,
-  pub nsfw: Option<bool>,
-  pub rate_limit_per_user: Option<i32>,
-  pub parent_id: Option<String>,
-  pub permission_overwrites: Vec<PermissionOverwrite>,
-  pub rtc_region: Option<String>,
-  pub video_quality_mode: Option<String>,
-  pub default_auto_archive_duration: Option<String>,
-  pub default_reaction_emoji: Option<String>,
-  pub default_sort_order: Option<String>,
-  pub default_forum_layout: Option<String>,
-  pub available_tags: Option<Vec<String>>,
+    pub name: String,
+    #[serde(rename = "type")]
+    pub channel_type: Option<String>,
+    pub position: Option<i32>,
+    pub topic: Option<String>,
+    pub bitrate: Option<i32>,
+    pub user_limit: Option<i32>,
+    pub nsfw: Option<bool>,
+    pub rate_limit_per_user: Option<i32>,
+    pub parent_id: Option<String>,
+    pub permission_overwrites: Vec<PermissionOverwrite>,
+    pub rtc_region: Option<String>,
+    pub video_quality_mode: Option<String>,
+    pub default_auto_archive_duration: Option<String>,
+    pub default_reaction_emoji: Option<String>,
+    pub default_sort_order: Option<String>,
+    pub default_forum_layout: Option<String>,
+    pub available_tags: Option<Vec<String>>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct PermissionType {
-  pub title: String,
-  #[serde(rename = "const")]
-  pub permission_const: u32,
-  pub description: Option<String>,
+    pub title: String,
+    #[serde(rename = "const")]
+    pub permission_const: u32,
+    pub description: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct ApplicationCommandPermission {
-  pub id: String,
-  #[serde(rename = "type")]
-  pub permission_type: PermissionType,
-  pub permission: bool,
+    pub id: String,
+    #[serde(rename = "type")]
+    pub permission_type: PermissionType,
+    pub permission: bool,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -1430,46 +1467,45 @@ pub struct ApplicationCommandOption {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct GuildApplicationCommand {
-  pub application_id: String,
-  pub guild_id: String,
-  pub command_id: String,
-  pub name: String,
-  pub name_localizations: Option<HashMap<String, String>>,
-  pub description: Option<String>,
-  pub description_localizations: Option<HashMap<String, String>>,
-  pub default_member_permissions: Option<u32>,
-  pub dm_permission: Option<bool>,
-  pub options: Vec<ApplicationCommandOption>,
+    pub application_id: String,
+    pub guild_id: String,
+    pub command_id: String,
+    pub name: String,
+    pub name_localizations: Option<HashMap<String, String>>,
+    pub description: Option<String>,
+    pub description_localizations: Option<HashMap<String, String>>,
+    pub default_member_permissions: Option<u32>,
+    pub dm_permission: Option<bool>,
+    pub options: Vec<ApplicationCommandOption>,
 }
-
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct GuildRole {
-  pub id: String,
-  pub name: Option<String>,
-  pub color: Option<u32>,
-  pub permissions: Option<u32>,
-  pub hoist: Option<bool>,
-  pub mentionable: Option<bool>,
-  pub unicode_emoji: Option<String>,
+    pub id: String,
+    pub name: Option<String>,
+    pub color: Option<u32>,
+    pub permissions: Option<u32>,
+    pub hoist: Option<bool>,
+    pub mentionable: Option<bool>,
+    pub unicode_emoji: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct NewGuild {
-  pub name: String,
-  pub description: Option<String>,
-  pub region: Option<String>,
-  pub icon: Option<String>,
-  pub verification_level: Option<u32>,
-  pub default_message_notifications: Option<u32>,
-  pub explicit_content_filter: Option<u32>,
-  pub preferred_locale: Option<String>,
-  pub afk_timeout: Option<u32>,
-  pub roles: Vec<GuildRole>,
-  pub channels: Option<Vec<GuildChannel>>,
-  pub afk_channel_id: Option<String>,
-  pub system_channel_id: Option<String>,
-  pub system_channel_flags: Option<u32>,
+    pub name: String,
+    pub description: Option<String>,
+    pub region: Option<String>,
+    pub icon: Option<String>,
+    pub verification_level: Option<u32>,
+    pub default_message_notifications: Option<u32>,
+    pub explicit_content_filter: Option<u32>,
+    pub preferred_locale: Option<String>,
+    pub afk_timeout: Option<u32>,
+    pub roles: Vec<GuildRole>,
+    pub channels: Option<Vec<GuildChannel>>,
+    pub afk_channel_id: Option<String>,
+    pub system_channel_id: Option<String>,
+    pub system_channel_flags: Option<u32>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -1500,56 +1536,56 @@ pub struct UpdateGuild {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct AllowedMention {
-  pub parse: Vec<String>,
-  pub roles: Vec<String>,
-  pub users: Vec<String>,
-  pub replied_user: bool,
+    pub parse: Vec<String>,
+    pub roles: Vec<String>,
+    pub users: Vec<String>,
+    pub replied_user: bool,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
-  pub struct InteractionCallbackData {
-      pub tts: Option<bool>,
-      pub content: Option<String>,
-      pub embeds: Option<Vec<Embed>>,
-      pub allowed_mentions: Option<AllowedMention>,
-      pub flags: Option<u32>,
-      pub components: Option<Vec<serde_json::Value>>,
-      pub attachments: Option<Vec<Attachment>>,
+pub struct InteractionCallbackData {
+    pub tts: Option<bool>,
+    pub content: Option<String>,
+    pub embeds: Option<Vec<Embed>>,
+    pub allowed_mentions: Option<AllowedMention>,
+    pub flags: Option<u32>,
+    pub components: Option<Vec<serde_json::Value>>,
+    pub attachments: Option<Vec<Attachment>>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct WebhookMessage {
-  pub content: Option<String>,
-  pub embeds: Option<Vec<Embed>>,
-  pub allowed_mentions: Option<AllowedMention>,
-  pub attachments: Option<Vec<Attachment>>,
-  pub components: Option<Vec<serde_json::Value>>,
-  pub payload_json: Option<String>,
-  // files[n] **	file contents	the contents of the file being sent/edited // REQUIRES CHANGING TO FORM DATA
+    pub content: Option<String>,
+    pub embeds: Option<Vec<Embed>>,
+    pub allowed_mentions: Option<AllowedMention>,
+    pub attachments: Option<Vec<Attachment>>,
+    pub components: Option<Vec<serde_json::Value>>,
+    pub payload_json: Option<String>,
+    // files[n] **	file contents	the contents of the file being sent/edited // REQUIRES CHANGING TO FORM DATA
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct HttpGuildRoleUpdate {
-  pub id: Option<String>,
-  pub position: Option<String>,
+    pub id: Option<String>,
+    pub position: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct ApplicationRoleConnectionsMetadata {
-  #[serde(rename = "type")]
-  pub application_role_connections_metadata_type: PermissionType,
-  pub key: String,
-  pub name: String,
-  pub description: String,
-  pub name_localizations: HashMap<String, String>,
-  pub description_localizations: HashMap<String, String>,
+    #[serde(rename = "type")]
+    pub application_role_connections_metadata_type: PermissionType,
+    pub key: String,
+    pub name: String,
+    pub description: String,
+    pub name_localizations: HashMap<String, String>,
+    pub description_localizations: HashMap<String, String>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct HttpStageInstance {
-  pub topic: String,
-  pub channel_id: String,
-  pub privacy_level: Option<u32>,
-  pub guild_scheduled_event_id: Option<String>,
-  pub send_start_notification: Option<bool>,
+    pub topic: String,
+    pub channel_id: String,
+    pub privacy_level: Option<u32>,
+    pub guild_scheduled_event_id: Option<String>,
+    pub send_start_notification: Option<bool>,
 }

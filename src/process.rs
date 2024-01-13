@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use nectar_process_lib::Address;
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 use super::*;
 
@@ -25,10 +25,7 @@ pub struct BotId {
 
 impl BotId {
     pub fn new(token: String, intents: u128) -> Self {
-        Self {
-            token,
-            intents,
-        }
+        Self { token, intents }
     }
 }
 
@@ -41,12 +38,6 @@ pub type WsChannels = HashMap<u32, BotId>;
 pub enum DiscordApiRequest {
     Connect(BotId),
     Disconnect(BotId),
-    Gateway {
-        bot: BotId,
-        event: GatewaySendEvent,
-    },
-    Http {
-        bot: BotId,
-        call: HttpApiCall,
-    },
+    Gateway { bot: BotId, event: GatewaySendEvent },
+    Http { bot: BotId, call: HttpApiCall },
 }
