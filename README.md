@@ -1,10 +1,3 @@
-# process_lib
+# discord_api
 
-Library of functions for more ergonomic Nectar process development.
-
-To develop/build:
-```
-git submodule add https://github.com/uqbar-dao/nectar-wit.git
-```
-
-Docs: (TODO link)
+Library for Discord API for use by bots.
