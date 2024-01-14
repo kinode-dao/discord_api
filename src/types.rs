@@ -1189,7 +1189,8 @@ pub struct RoleSubscriptionData {
 }
 
 #[derive(Serialize, Deserialize, Debug)]
-pub struct Message { // in a MessageUpdate all fields are optional except id and channel_id
+pub struct Message {
+    // in a MessageUpdate all fields are optional except id and channel_id
     pub id: String,
     pub channel_id: String,
     pub author: Option<User>, // author*	user object	the author of this message (not guaranteed to be a valid user, see below)
