@@ -2,8 +2,6 @@ use std::collections::HashMap;
 
 use serde::{Deserialize, Serialize};
 
-use crate::http_api::HttpApiCall;
-
 pub const DISCORD_GATEWAY: &str = "wss://gateway.discord.gg/?v=9&encoding=json";
 pub const HTTP_URL: &str = "https://discord.com/api/v9";
 
@@ -1191,26 +1189,26 @@ pub struct RoleSubscriptionData {
 }
 
 #[derive(Serialize, Deserialize, Debug)]
-pub struct Message {
+pub struct Message { // in a MessageUpdate all fields are optional except id and channel_id
     pub id: String,
     pub channel_id: String,
-    pub author: User, // author*	user object	the author of this message (not guaranteed to be a valid user, see below)
-    pub content: String,
-    pub timestamp: String,
+    pub author: Option<User>, // author*	user object	the author of this message (not guaranteed to be a valid user, see below)
+    pub content: Option<String>,
+    pub timestamp: Option<String>,
     pub edited_timestamp: Option<String>,
-    pub tts: bool,
+    pub tts: Option<bool>,
     pub mentions: Option<Vec<User>>,
-    pub mention_everyone: bool,
+    pub mention_everyone: Option<bool>,
     pub mention_roles: Vec<Role>,
     pub mention_channels: Option<Vec<Channel>>,
     pub attachments: Vec<Attachment>,
     pub embeds: Vec<Embed>,
     pub reactions: Option<Vec<Reaction>>,
     pub nonce: Option<String>,
-    pub pinned: bool,
+    pub pinned: Option<bool>,
     pub webhook_id: Option<String>,
     #[serde(rename = "type")]
-    pub message_type: u32,
+    pub message_type: Option<u32>,
     pub activity: Option<MessageActivity>,
     pub application: Option<Application>,
     pub application_id: Option<String>,
