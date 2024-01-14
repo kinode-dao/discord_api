@@ -1,9 +1,7 @@
 use std::collections::HashMap;
-
-use nectar_process_lib::Address;
 use serde::{Deserialize, Serialize};
-
 use super::*;
+use nectar_process_lib::Address;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Bot {
