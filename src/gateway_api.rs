@@ -1,4 +1,3 @@
-use nectar_process_lib::print_to_terminal;
 use serde::{Deserialize, Serialize};
 
 use super::types::*;
@@ -82,18 +81,14 @@ pub fn parse_gateway_blob(
     let payload = match serde_json::from_slice::<GatewayPayload>(payload_bytes) {
         Ok(payload) => payload,
         Err(_) => {
-            print_to_terminal(
-                0,
-                &format!(
-                    "discord_api: not a valid GatewayPayload {}",
-                    payload_bytes
-                        .to_vec()
-                        .into_iter()
-                        .map(|x| x as char)
-                        .collect::<String>()
-                ),
-            );
-            return Err(anyhow::anyhow!("Failed to parse gateway payload"));
+            return Err(anyhow::anyhow!(format!(
+                "discord_api: not a valid GatewayPayload {}",
+                payload_bytes
+                    .to_vec()
+                    .into_iter()
+                    .map(|x| x as char)
+                    .collect::<String>()
+            )));
         }
     };
 
@@ -135,7 +130,6 @@ pub fn parse_gateway_blob(
             payload.t.unwrap_or("".to_string())
         ));
     };
-    // print_to_terminal(0, &format!("discord_api: 0.3"));
 
     let payload: GatewayReceiveEvent = match t {
         GatewayEventType::Ready => {

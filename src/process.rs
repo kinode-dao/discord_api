@@ -1,5 +1,5 @@
 use super::*;
-use nectar_process_lib::Address;
+use kinode_process_lib::Address;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
