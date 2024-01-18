@@ -166,7 +166,7 @@ pub enum CommandsCall {
         application_id: String,
         guild_id: String,
         command_id: String,
-        command: GuildApplicationCommand,
+        command: ApplicationCommand,
     },
     // {{baseUrl}}/applications/:application_id/guilds/:guild_id/commands?with_localizations=<boolean,null>
     ListGuildApplicationCommands {
@@ -178,13 +178,13 @@ pub enum CommandsCall {
     BulkSetGuildApplicationCommands {
         application_id: String,
         guild_id: String,
-        commands: Vec<GuildApplicationCommand>,
+        commands: Vec<ApplicationCommand>,
     },
     // {{baseUrl}}/applications/:application_id/guilds/:guild_id/commands
     CreateGuildApplicationCommand {
         application_id: String,
         guild_id: String,
-        command: GuildApplicationCommand,
+        command: NewApplicationCommand,
     },
     // {{baseUrl}}/applications/:application_id/commands/:command_id
     GetGlobalApplicationCommand {
@@ -200,7 +200,7 @@ pub enum CommandsCall {
     UpdateApplicationCommand {
         application_id: String,
         command_id: String,
-        command: GuildApplicationCommand,
+        command: ApplicationCommand,
     },
     // {{baseUrl}}/applications/:application_id/commands?with_localizations=<boolean,null>
     ListApplicationCommands {
@@ -210,12 +210,12 @@ pub enum CommandsCall {
     // {{baseUrl}}/applications/:application_id/commands
     BulkSetApplicationCommands {
         application_id: String,
-        commands: Vec<GuildApplicationCommand>,
+        commands: Vec<ApplicationCommand>,
     },
     // {{baseUrl}}/applications/:application_id/commands
     CreateApplicationCommand {
         application_id: String,
-        command: GuildApplicationCommand,
+        command: NewApplicationCommand,
     },
 }
 
@@ -458,6 +458,18 @@ pub enum GuildTemplatesCall {
 }
 
 #[derive(Serialize, Deserialize, Debug)]
+pub enum InteractionType {
+    Pong = 1,
+    ChannelMessageWithSource = 4,
+    DeferredChannelMessageWithSource = 5,
+    DeferredUpdateMessage = 6,
+    UpdateMessage = 7,
+    ApplicationCommandAutocompleteResult = 8,
+    Modal = 9,
+    PremiumRequired = 0,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
 pub enum InteractionsCall {
     // {{baseUrl}}/webhooks/:webhook_id/:webhook_token/messages/@original?thread_id=<string,null>
     GetOriginalWebhookMessage {
@@ -483,7 +495,7 @@ pub enum InteractionsCall {
         interaction_id: String,
         interaction_token: String,
         #[serde(rename = "type")]
-        interaction_type: u32,
+        interaction_type: u8, // See InteractionType, you probably want 4 for simple cases
         data: Option<InteractionCallbackData>,
     },
     // {{baseUrl}}/webhooks/:webhook_id/:webhook_token/messages/:message_id?thread_id=<string,null>
