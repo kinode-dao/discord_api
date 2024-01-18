@@ -1243,7 +1243,7 @@ pub struct ApplicationCommandInteractionDataOption {
     pub name: String,
     #[serde(rename = "type")]
     pub option_type: u32,
-    pub value: Option<serde_json::Value>,
+    pub value: serde_json::Value,
     pub options: Option<Vec<ApplicationCommandInteractionDataOption>>,
     pub focused: Option<bool>,
 }
@@ -1454,28 +1454,97 @@ pub struct ApplicationCommandPermission {
 }
 
 #[derive(Serialize, Deserialize, Debug)]
+pub enum ApplicationCommandOptionType {
+    SubCommand = 1,
+    SubCommandGroup = 2,
+    String = 3,
+    Integer = 4,
+    Boolean = 5,
+    User = 6,
+    Channel = 7,
+    Role = 8,
+    Mentionable = 9,
+    Number = 10,
+    Attachment = 11,
+}
+
+impl ApplicationCommandOptionType {
+    pub fn as_u8(&self) -> u8 {
+        match self {
+            ApplicationCommandOptionType::SubCommand => 1,
+            ApplicationCommandOptionType::SubCommandGroup => 2,
+            ApplicationCommandOptionType::String => 3,
+            ApplicationCommandOptionType::Integer => 4,
+            ApplicationCommandOptionType::Boolean => 5,
+            ApplicationCommandOptionType::User => 6,
+            ApplicationCommandOptionType::Channel => 7,
+            ApplicationCommandOptionType::Role => 8,
+            ApplicationCommandOptionType::Mentionable => 9,
+            ApplicationCommandOptionType::Number => 10,
+            ApplicationCommandOptionType::Attachment => 11,
+        }
+    }
+}
+
+#[derive(Serialize, Deserialize, Debug)]
 pub struct ApplicationCommandOption {
     #[serde(rename = "type")]
-    pub option_type: u32,
+    pub option_type: u8,
     pub name: String,
     pub description: String,
     pub name_localizations: Option<HashMap<String, String>>,
     pub description_localizations: Option<HashMap<String, String>>,
     pub required: Option<bool>,
+    // pub choices: TODO https://discord.com/developers/docs/interactions/application-commands#application-command-object-application-command-option-type
+    // pub options: TODO
+    // pub channel_types: TODO
+    // pub min_value: Option<f32>,
+    // pub max_value: Option<f32>,
+    // pub min_length: Option<u32>,
+    // pub max_length: Option<u32>,
+    // pub autocomplete: Option<bool>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
-pub struct GuildApplicationCommand {
+pub enum ApplicationCommandType {
+    ChatInput = 1,
+    User = 2,
+    Message = 3,
+}
+
+impl ApplicationCommandType {
+    pub fn as_u8(&self) -> u8 {
+        match self {
+            ApplicationCommandType::ChatInput => 1,
+            ApplicationCommandType::User => 2,
+            ApplicationCommandType::Message => 3,
+        }
+    }
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct ApplicationCommand {
+    pub name: String,
+    pub description: Option<String>,
+    #[serde(rename = "type")]
+    pub command_type: Option<ApplicationCommandType>,
     pub application_id: String,
     pub guild_id: String,
     pub command_id: String,
-    pub name: String,
     pub name_localizations: Option<HashMap<String, String>>,
-    pub description: Option<String>,
     pub description_localizations: Option<HashMap<String, String>>,
     pub default_member_permissions: Option<u32>,
     pub dm_permission: Option<bool>,
     pub options: Vec<ApplicationCommandOption>,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct NewApplicationCommand {
+    pub name: String,
+    pub description: Option<String>,
+    #[serde(rename = "type")]
+    pub command_type: Option<u8>,
+    pub options: Option<Vec<ApplicationCommandOption>>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]

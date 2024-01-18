@@ -1,5 +1,5 @@
 use super::*;
-use kinode_process_lib::Address;
+use kinode_process_lib::{http::HttpClientAction, Address, Message, Request, SendError};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
