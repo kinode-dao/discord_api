@@ -5,8 +5,9 @@ use kinode_process_lib::{
         close_ws_connection, open_ws_connection_and_await, send_ws_client_push, HttpClientAction,
         HttpClientRequest, OutgoingHttpRequest, WsMessageType,
     },
-    print_to_terminal, timer::set_timer,
-    Address, LazyLoadBlob, Message, Request, Response
+    print_to_terminal,
+    timer::set_timer,
+    Address, LazyLoadBlob, Message, Request, Response,
 };
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
@@ -125,12 +126,14 @@ fn handle_api_request(
 
             let _ = Request::new()
                 .target(("our", "http_client", "distro", "sys"))
-                .body(serde_json::to_vec(&HttpClientAction::Http(OutgoingHttpRequest {
-                    method: "GET".to_string(),
-                    version: None,
-                    url: format!("{}/gateway", HTTP_URL.to_string()),
-                    headers: HashMap::new(),
-                }))?)
+                .body(serde_json::to_vec(&HttpClientAction::Http(
+                    OutgoingHttpRequest {
+                        method: "GET".to_string(),
+                        version: None,
+                        url: format!("{}/gateway", HTTP_URL.to_string()),
+                        headers: HashMap::new(),
+                    },
+                ))?)
                 .send_and_await_response(5)?;
 
             let Some(blob) = get_blob() else {
@@ -262,7 +265,11 @@ fn handle_websocket_client_message(
 
 // Connect to the Discord Gateway API
 // Sent when a bot is connected with a DiscordApiRequest::Connect
-fn connect_gateway(our: &Address, ws_client_channel: &u32, gateway_url: String) -> anyhow::Result<()> {
+fn connect_gateway(
+    our: &Address,
+    ws_client_channel: &u32,
+    gateway_url: String,
+) -> anyhow::Result<()> {
     open_ws_connection_and_await(
         our.node.clone(),
         format!("{}{}", gateway_url, GATEWAY_PARAMS),
@@ -304,7 +311,13 @@ fn handle_gateway_event(
             // If we get a reconnect event, we need to open a WS connection to the resume_gateway_url
             open_ws_connection_and_await(
                 our.node.clone(),
-                format!("{}{}", bot.resume_gateway_url.clone().unwrap_or(DISCORD_GATEWAY.to_string()), GATEWAY_PARAMS),
+                format!(
+                    "{}{}",
+                    bot.resume_gateway_url
+                        .clone()
+                        .unwrap_or(DISCORD_GATEWAY.to_string()),
+                    GATEWAY_PARAMS
+                ),
                 None,
                 bot.ws_client_channel,
             )?;
@@ -394,7 +407,10 @@ fn send_identify(our: &Address, bot: &mut Bot, interval: u64) -> anyhow::Result<
         WsMessageType::Text,
         LazyLoadBlob {
             mime: None,
-            bytes: GatewaySendEvent::Heartbeat { seq: Some(bot.heartbeat_sequence) }.to_json_bytes(),
+            bytes: GatewaySendEvent::Heartbeat {
+                seq: Some(bot.heartbeat_sequence),
+            }
+            .to_json_bytes(),
         },
     )?;
 
@@ -411,7 +427,11 @@ fn send_identify(our: &Address, bot: &mut Bot, interval: u64) -> anyhow::Result<
     Ok(())
 }
 
-fn maintain_heartbeat(our: &Address, context: Option<Vec<u8>>, state: &mut State) -> anyhow::Result<()> {
+fn maintain_heartbeat(
+    our: &Address,
+    context: Option<Vec<u8>>,
+    state: &mut State,
+) -> anyhow::Result<()> {
     let Some(context) = context else {
         return Ok(()); // No context
     };
