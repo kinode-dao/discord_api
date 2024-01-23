@@ -3,6 +3,7 @@ use std::collections::HashMap;
 use serde::{Deserialize, Serialize};
 
 pub const DISCORD_GATEWAY: &str = "wss://gateway.discord.gg/?v=9&encoding=json";
+pub const GATEWAY_PARAMS: &str = "?v=9&encoding=json";
 pub const HTTP_URL: &str = "https://discord.com/api/v9";
 
 // Gateway types
