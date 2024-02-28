@@ -136,7 +136,7 @@ fn handle_api_request(
                 ))?)
                 .send_and_await_response(5)?;
 
-            println!("jeeves: api response: {:?}", res);
+            print_to_terminal(1, &format!("discord_api: api response: {:?}", res));
 
             let Some(blob) = get_blob() else {
                 return Err(anyhow::anyhow!("discord_api: no data for /gateway"));
