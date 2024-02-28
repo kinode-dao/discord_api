@@ -124,7 +124,7 @@ fn handle_api_request(
                 .insert(BotId::new(bot.token.clone(), bot.intents), bot);
             state.channels.insert(ws_client_channel, bot_id);
 
-            let _ = Request::new()
+            let res = Request::new()
                 .target(("our", "http_client", "distro", "sys"))
                 .body(serde_json::to_vec(&HttpClientAction::Http(
                     OutgoingHttpRequest {
@@ -135,6 +135,8 @@ fn handle_api_request(
                     },
                 ))?)
                 .send_and_await_response(5)?;
+
+            println!("jeeves: api response: {:?}", res);
 
             let Some(blob) = get_blob() else {
                 return Err(anyhow::anyhow!("discord_api: no data for /gateway"));
