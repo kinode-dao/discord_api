@@ -291,9 +291,8 @@ fn connect_gateway(
         0,
         &format!(
             "discord_api: connecting gateway: {} {}",
-            gateway_url,
-            GATEWAY_PARAMS,
-        )
+            gateway_url, GATEWAY_PARAMS,
+        ),
     );
     open_ws_connection_and_await(
         our.node.clone(),
