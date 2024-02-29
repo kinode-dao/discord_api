@@ -290,7 +290,7 @@ fn connect_gateway(
     print_to_terminal(
         0,
         &format!(
-            "discord_api: connecting gateway: {} {}",
+            "discord_api: connecting gateway: {}{}",
             gateway_url, GATEWAY_PARAMS,
         ),
     );
@@ -315,10 +315,11 @@ fn handle_gateway_event(
     // Forward all other events to the parent process
     match event {
         GatewayReceiveEvent::Hello(hello) => {
+            print_to_terminal(0, &format!("discord_api: HELLO {:?}", hello));
             send_identify(our, bot, hello.heartbeat_interval)?;
         }
         GatewayReceiveEvent::Ready(ready) => {
-            print_to_terminal(1, &format!("discord_api: READY {:?}", ready));
+            print_to_terminal(0, &format!("discord_api: READY {:?}", ready));
             bot.session_id = ready.session_id.clone();
             bot.gateway_connection_open = true;
             bot.resume_gateway_url = Some(ready.resume_gateway_url.clone());
@@ -331,7 +332,7 @@ fn handle_gateway_event(
             // set_state(&serde_json::to_vec(&load_state())?);
         }
         GatewayReceiveEvent::Reconnect => {
-            print_to_terminal(1, &format!("discord_api: RECONNECT"));
+            print_to_terminal(0, &format!("discord_api: RECONNECT"));
             // If we get a reconnect event, we need to open a WS connection to the resume_gateway_url
             open_ws_connection_and_await(
                 our.node.clone(),
