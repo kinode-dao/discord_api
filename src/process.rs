@@ -126,7 +126,7 @@ fn handle_api_request(
 
             let url = format!("{}/gateway", HTTP_URL.to_string());
             print_to_terminal(1, &format!("discord_api: request to {}", url));
-            let _ = Request::new()
+            let res = Request::new()
                 .target(("our", "http_client", "distro", "sys"))
                 .body(serde_json::to_vec(&HttpClientAction::Http(
                     OutgoingHttpRequest {
