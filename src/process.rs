@@ -289,9 +289,11 @@ fn connect_gateway(
 ) -> anyhow::Result<()> {
     print_to_terminal(
         0,
-        "discord_api: connecting gateway: {:?} {:?}",
-        gateway_url,
-        GATEWAY_PARAMS,
+        &format!(
+            "discord_api: connecting gateway: {} {}",
+            gateway_url,
+            GATEWAY_PARAMS,
+        )
     );
     open_ws_connection_and_await(
         our.node.clone(),
