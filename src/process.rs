@@ -125,7 +125,7 @@ fn handle_api_request(
             state.channels.insert(ws_client_channel, bot_id);
 
             let url = format!("{}/gateway", HTTP_URL.to_string());
-            print_to_terminal(1, &format!("discord_api: request to {}", url));
+            print_to_terminal(0, &format!("discord_api: request to {}", url));
             let res = Request::new()
                 .target(("our", "http_client", "distro", "sys"))
                 .body(serde_json::to_vec(&HttpClientAction::Http(
@@ -138,7 +138,7 @@ fn handle_api_request(
                 ))?)
                 .send_and_await_response(5)?;
 
-            print_to_terminal(1, &format!("discord_api: api response: {:?}", res));
+            print_to_terminal(0, &format!("discord_api: api response: {:?}", res));
 
             let Some(blob) = get_blob() else {
                 return Err(anyhow::anyhow!("discord_api: no data for /gateway"));
@@ -209,17 +209,17 @@ fn handle_websocket_client_message(
         // Handle an incoming message from Discord Gateway API (via http_client)
         HttpClientRequest::WebSocketPush { channel_id, .. } => {
             let Some(blob) = get_blob() else {
-                // print_to_terminal(0, "discord_api: ws push: no blob");
+                print_to_terminal(0, "discord_api: ws push: no blob");
                 return Ok(());
             };
 
             let Some(bot_id) = state.channels.get(&channel_id) else {
-                // print_to_terminal(0, "discord_api: ws push: no bot_id");
+                print_to_terminal(0, "discord_api: ws push: no bot_id");
                 return Ok(());
             };
 
             let Some(bot) = state.bots.get_mut(&bot_id) else {
-                // print_to_terminal(0, "discord_api: ws push: no bot");
+                print_to_terminal(0, "discord_api: ws push: no bot");
                 return Ok(());
             };
 
@@ -234,22 +234,22 @@ fn handle_websocket_client_message(
                     // set_state(&serde_json::to_vec(state)?);
                 }
                 Err(_e) => {
-                    // print_to_terminal(
-                    //     0,
-                    //     &format!("discord_api: ws push: unable to parse blob: {:?}", e),
-                    // );
+                    print_to_terminal(
+                        0,
+                        &format!("discord_api: ws push: unable to parse blob: {:?}", e),
+                    );
                 }
             }
         }
         HttpClientRequest::WebSocketClose { channel_id } => {
             print_to_terminal(0, "discord_api: ws close");
             let Some(bot_id) = state.channels.get(&channel_id) else {
-                // print_to_terminal(0, "discord_api: ws push: no bot_id");
+                print_to_terminal(0, "discord_api: ws push: no bot_id");
                 return Ok(());
             };
 
             let Some(bot) = state.bots.get_mut(&bot_id) else {
-                // print_to_terminal(0, "discord_api: ws push: no bot");
+                print_to_terminal(0, "discord_api: ws push: no bot");
                 return Ok(());
             };
 
@@ -344,10 +344,10 @@ fn handle_gateway_event(
             )?;
         }
         GatewayReceiveEvent::InvalidSession(resumable) => {
-            // print_to_terminal(
-            //     0,
-            //     &format!("discord_api: INVALID SESSION, resumable: {:?}", resumable),
-            // );
+            print_to_terminal(
+                0,
+                &format!("discord_api: INVALID SESSION, resumable: {:?}", resumable),
+            );
 
             if resumable {
                 // If we get a reconnect event, we need to open a WS connection to the resume_gateway_url
@@ -371,7 +371,7 @@ fn handle_gateway_event(
             }
         }
         _ => {
-            // print_to_terminal(0, &format!("discord_api: OTHER EVENT: {:?}", event));
+            print_to_terminal(0, &format!("discord_api: OTHER EVENT: {:?}", event));
             // Pass all the others to the parent process
             Request::new()
                 .target(bot.parent.clone())
