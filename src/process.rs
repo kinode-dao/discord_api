@@ -236,7 +236,7 @@ fn handle_websocket_client_message(
                 Err(_e) => {
                     print_to_terminal(
                         0,
-                        &format!("discord_api: ws push: unable to parse blob: {:?}", e),
+                        &format!("discord_api: ws push: unable to parse blob: {:?}", _e),
                     );
                 }
             }
