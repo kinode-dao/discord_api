@@ -1,3 +1,4 @@
+use kinode_process_lib::print_to_terminal;
 use serde::{Deserialize, Serialize};
 
 use super::types::*;
@@ -91,6 +92,8 @@ pub fn parse_gateway_blob(
             )));
         }
     };
+
+    print_to_terminal(0, &format!("discord_api: gateway blob: {:?}", payload));
 
     let seq = payload.s;
 
