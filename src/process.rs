@@ -148,6 +148,9 @@ fn handle_api_request(
                 return Err(anyhow::anyhow!("discord_api: no data for /gateway"));
             };
 
+            let blob_json = serde_json::from_slice::<serde_json::Value>(&blob.bytes)?;
+            print_to_terminal(0, &format!("discord_api: got blob: {:?}", blob_json));
+
             let gateway_info = serde_json::from_slice::<GatewayInfo>(&blob.bytes)?;
             state.gateway_url = gateway_info.url.clone();
 
