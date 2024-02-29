@@ -149,7 +149,10 @@ fn handle_api_request(
             };
 
             let blob_json = serde_json::from_slice::<serde_json::Value>(&blob.bytes)?;
-            print_to_terminal(0, &format!("discord_api: got gateway blob: {:?}", blob_json));
+            print_to_terminal(
+                0,
+                &format!("discord_api: got gateway blob: {:?}", blob_json),
+            );
 
             let gateway_info = serde_json::from_slice::<GatewayInfo>(&blob.bytes)?;
             state.gateway_url = gateway_info.url.clone();
@@ -284,7 +287,12 @@ fn connect_gateway(
     ws_client_channel: &u32,
     gateway_url: String,
 ) -> anyhow::Result<()> {
-    print_to_terminal(0, "discord_api: connecting gateway: {:?} {:?}", gateway_url, GATEWAY_PARAMS);
+    print_to_terminal(
+        0,
+        "discord_api: connecting gateway: {:?} {:?}",
+        gateway_url,
+        GATEWAY_PARAMS,
+    );
     open_ws_connection_and_await(
         our.node.clone(),
         format!("{}{}", gateway_url, GATEWAY_PARAMS),
