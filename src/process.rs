@@ -124,13 +124,15 @@ fn handle_api_request(
                 .insert(BotId::new(bot.token.clone(), bot.intents), bot);
             state.channels.insert(ws_client_channel, bot_id);
 
-            let res = Request::new()
+            let url = format!("{}/gateway", HTTP_URL.to_string());
+            print_to_terminal(1, &format!("discord_api: request to {}", url));
+            let _ = Request::new()
                 .target(("our", "http_client", "distro", "sys"))
                 .body(serde_json::to_vec(&HttpClientAction::Http(
                     OutgoingHttpRequest {
                         method: "GET".to_string(),
                         version: None,
-                        url: format!("{}/gateway", HTTP_URL.to_string()),
+                        url,
                         headers: HashMap::new(),
                     },
                 ))?)
