@@ -173,6 +173,7 @@ fn handle_api_request(
         DiscordApiRequest::Http { bot, call } => {
             // Send an http request to http_client
             let (url, method, http_body) = call.to_request();
+            print_to_terminal(0, &format!("discord_api: making http request to {}", url));
             let mut headers = HashMap::new();
             headers.insert("Authorization".to_string(), format!("Bot {}", bot.token));
             headers.insert("Content-Type".to_string(), "application/json".to_string());
@@ -188,12 +189,14 @@ fn handle_api_request(
                 headers,
             };
 
-            let _ = Request::new()
+            let res = Request::new()
                 .target(("our", "http_client", "distro", "sys"))
                 .inherit(true) // Send response to the process that requested
                 .body(serde_json::to_vec(&HttpClientAction::Http(http_req))?)
                 .blob_bytes(http_body)
                 .send()?;
+
+            print_to_terminal(0, &format!("discord_api: http response: {:?}", res));
         }
     }
 
