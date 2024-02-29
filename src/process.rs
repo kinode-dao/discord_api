@@ -139,6 +139,10 @@ fn handle_api_request(
                 .send_and_await_response(5)?;
 
             print_to_terminal(0, &format!("discord_api: api response: {:?}", res));
+            if let Ok(response) = res {
+                let res_body = serde_json::from_slice::<serde_json::Value>(&response.body())?;
+                print_to_terminal(0, &format!("discord_api: response body: {:?}", res_body));
+            }
 
             let Some(blob) = get_blob() else {
                 return Err(anyhow::anyhow!("discord_api: no data for /gateway"));
