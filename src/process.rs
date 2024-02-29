@@ -102,7 +102,10 @@ fn handle_api_request(
     api_req: DiscordApiRequest,
     state: &mut State,
 ) -> anyhow::Result<()> {
-    print_to_terminal(0, &format!("discord_api: handle_api_request: {:?}", api_req));
+    print_to_terminal(
+        0,
+        &format!("discord_api: handle_api_request: {:?}", api_req),
+    );
     match api_req {
         // Connect a bot to the Discord Gateway API
         // Comes from the parent process
