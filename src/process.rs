@@ -319,10 +319,15 @@ fn handle_gateway_event(
 ) -> anyhow::Result<()> {
     // Handle all events that have to do with the gateway connection
     // Forward all other events to the parent process
+    print_to_terminal(0, &format!("discord_api: gateway event: {:?}", event));
     match event {
         GatewayReceiveEvent::Hello(hello) => {
             print_to_terminal(0, &format!("discord_api: HELLO {:?}", hello));
-            send_identify(our, bot, hello.heartbeat_interval)?;
+            if let Ok(thing) = send_identify(our, bot, hello.heartbeat_interval) {
+                print_to_terminal(0, "discord_api: identify ok");
+            } else {
+                print_to_terminal(0, "discord_api: identify not ok");
+            }
         }
         GatewayReceiveEvent::Ready(ready) => {
             print_to_terminal(0, &format!("discord_api: READY {:?}", ready));
@@ -432,6 +437,7 @@ fn send_identify(our: &Address, bot: &mut Bot, interval: u64) -> anyhow::Result<
         BotId::new(bot.token.clone(), bot.intents),
     );
 
+    print_to_terminal(0, &format!("discord_api: sending heartbeat to bot: {:?}", bot));
     send_ws_client_push(
         our.node.clone(),
         bot.ws_client_channel,
@@ -445,6 +451,7 @@ fn send_identify(our: &Address, bot: &mut Bot, interval: u64) -> anyhow::Result<
         },
     )?;
 
+    print_to_terminal(0, &format!("discord_api: sending event to bot: {:?}", send_event));
     send_ws_client_push(
         our.node.clone(),
         bot.ws_client_channel,
