@@ -437,7 +437,10 @@ fn send_identify(our: &Address, bot: &mut Bot, interval: u64) -> anyhow::Result<
         BotId::new(bot.token.clone(), bot.intents),
     );
 
-    print_to_terminal(0, &format!("discord_api: sending heartbeat to bot: {:?}", bot));
+    print_to_terminal(
+        0,
+        &format!("discord_api: sending heartbeat to bot: {:?}", bot),
+    );
     send_ws_client_push(
         our.node.clone(),
         bot.ws_client_channel,
@@ -451,7 +454,10 @@ fn send_identify(our: &Address, bot: &mut Bot, interval: u64) -> anyhow::Result<
         },
     )?;
 
-    print_to_terminal(0, &format!("discord_api: sending event to bot: {:?}", send_event));
+    print_to_terminal(
+        0,
+        &format!("discord_api: sending event to bot: {:?}", send_event),
+    );
     send_ws_client_push(
         our.node.clone(),
         bot.ws_client_channel,
