@@ -261,7 +261,7 @@ fn handle_websocket_client_message(
             }
         }
         HttpClientRequest::WebSocketClose { channel_id } => {
-            print_to_terminal(0, "discord_api: ws close");
+            print_to_terminal(0, &format!("discord_api: ws close (cid {})", channel_id));
             let Some(bot_id) = state.channels.get(&channel_id) else {
                 print_to_terminal(0, "discord_api: ws push: no bot_id");
                 return Ok(());
@@ -273,10 +273,10 @@ fn handle_websocket_client_message(
             };
 
             // // Reopen connection if closed, also clear current timers and set_state again
-            // bot.gateway_connection_open = false;
-            // bot.heartbeat_interval = 0;
-            // bot.heartbeat_sequence = 0;
-            // bot.session_id = "".to_string();
+            bot.gateway_connection_open = false;
+            bot.heartbeat_interval = 0;
+            bot.heartbeat_sequence = 0;
+            bot.session_id = "".to_string();
 
             // connect_gateway(our, &bot.ws_client_channel, state.gateway_url.clone())?;
             // // set_state(&serde_json::to_vec(state)?);
@@ -323,7 +323,10 @@ fn handle_gateway_event(
     match event {
         GatewayReceiveEvent::Hello(hello) => {
             print_to_terminal(0, &format!("discord_api: HELLO {:?}", hello));
-            if let Ok(thing) = send_identify(our, bot, hello.heartbeat_interval) {
+            if let Some(resume_url) = bot.resume_gateway_url {
+                print_to_terminal(0, "discord_api: have resume gateway url; attempting reconnect");
+                connect_gateway(our, &bot.ws_client_channel, resume_url)?;
+            } else if let Ok(thing) = send_identify(our, bot, hello.heartbeat_interval) {
                 print_to_terminal(0, "discord_api: identify ok");
             } else {
                 print_to_terminal(0, "discord_api: identify not ok");
