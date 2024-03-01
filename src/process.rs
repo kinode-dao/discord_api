@@ -272,14 +272,14 @@ fn handle_websocket_client_message(
                 return Ok(());
             };
 
-            // Reopen connection if closed, also clear current timers and set_state again
-            bot.gateway_connection_open = false;
-            bot.heartbeat_interval = 0;
-            bot.heartbeat_sequence = 0;
-            bot.session_id = "".to_string();
+            // // Reopen connection if closed, also clear current timers and set_state again
+            // bot.gateway_connection_open = false;
+            // bot.heartbeat_interval = 0;
+            // bot.heartbeat_sequence = 0;
+            // bot.session_id = "".to_string();
 
-            connect_gateway(our, &bot.ws_client_channel, state.gateway_url.clone())?;
-            // set_state(&serde_json::to_vec(state)?);
+            // connect_gateway(our, &bot.ws_client_channel, state.gateway_url.clone())?;
+            // // set_state(&serde_json::to_vec(state)?);
         }
     }
 
