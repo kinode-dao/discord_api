@@ -324,7 +324,10 @@ fn handle_gateway_event(
         GatewayReceiveEvent::Hello(hello) => {
             print_to_terminal(0, &format!("discord_api: HELLO {:?}", hello));
             if let Some(resume_url) = bot.resume_gateway_url {
-                print_to_terminal(0, "discord_api: have resume gateway url; attempting reconnect");
+                print_to_terminal(
+                    0,
+                    "discord_api: have resume gateway url; attempting reconnect",
+                );
                 connect_gateway(our, &bot.ws_client_channel, resume_url)?;
             } else if let Ok(thing) = send_identify(our, bot, hello.heartbeat_interval) {
                 print_to_terminal(0, "discord_api: identify ok");
