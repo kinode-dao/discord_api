@@ -308,6 +308,7 @@ impl GatewayEventType {
     pub fn from_str(s: &str) -> Option<Self> {
         match s.to_uppercase().as_str() {
             "READY" => Some(Self::Ready),
+            "RESUMED" => Some(Self::Resumed),
             "APPLICATION_COMMAND_PERMISSIONS_UPDATE" => {
                 Some(Self::ApplicationCommandPermissionsUpdate)
             }

@@ -330,9 +330,9 @@ fn handle_gateway_event(
                 );
                 connect_gateway(our, &bot.ws_client_channel, resume_url)?;
             } else if let Ok(thing) = send_identify(our, bot, hello.heartbeat_interval) {
-                print_to_terminal(0, "discord_api: identify ok");
+                print_to_terminal(0, "discord_api: identify sent");
             } else {
-                print_to_terminal(0, "discord_api: identify not ok");
+                print_to_terminal(0, "discord_api: identify not sent");
             }
         }
         GatewayReceiveEvent::Ready(ready) => {
