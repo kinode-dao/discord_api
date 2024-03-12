@@ -376,7 +376,7 @@ fn handle_gateway_event(
                     mime: None,
                     bytes: send_event.to_json_bytes(),
                 },
-            )?;
+            );
         }
         GatewayReceiveEvent::InvalidSession(resumable) => {
             print_to_terminal(
@@ -399,7 +399,7 @@ fn handle_gateway_event(
                         mime: None,
                         bytes: send_event.to_json_bytes(),
                     },
-                )?;
+                );
             } else {
                 send_identify(our, bot, bot.heartbeat_interval)?;
             }
@@ -453,7 +453,7 @@ fn send_identify(our: &Address, bot: &mut Bot, interval: u64) -> anyhow::Result<
             }
             .to_json_bytes(),
         },
-    )?;
+    );
 
     print_to_terminal(
         0,
@@ -466,7 +466,7 @@ fn send_identify(our: &Address, bot: &mut Bot, interval: u64) -> anyhow::Result<
             mime: None,
             bytes: send_event.to_json_bytes(),
         },
-    )?;
+    );
 
     Ok(())
 }
@@ -497,7 +497,7 @@ fn maintain_heartbeat(
                 }
                 .to_json_bytes(),
             },
-        )?;
+        );
 
         discord_heartbeat_tick(bot.heartbeat_interval, heartbeat.bot);
     }
