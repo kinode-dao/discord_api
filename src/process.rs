@@ -301,7 +301,6 @@ fn connect_gateway(
         ),
     );
     open_ws_connection(
-        our.node.clone(),
         format!("{}{}", gateway_url, GATEWAY_PARAMS),
         None,
         *ws_client_channel,
@@ -351,8 +350,7 @@ fn handle_gateway_event(
         GatewayReceiveEvent::Reconnect => {
             print_to_terminal(0, &format!("discord_api: RECONNECT"));
             // If we get a reconnect event, we need to open a WS connection to the resume_gateway_url
-            open_ws_connection_and_await(
-                our.node.clone(),
+            open_ws_connection(
                 format!(
                     "{}{}",
                     bot.resume_gateway_url
