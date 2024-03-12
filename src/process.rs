@@ -2,7 +2,7 @@ use super::*;
 use kinode_process_lib::{
     await_message, get_blob, get_state,
     http::{
-        close_ws_connection, open_ws_connection_and_await, send_ws_client_push, HttpClientAction,
+        close_ws_connection, open_ws_connection, send_ws_client_push, HttpClientAction,
         HttpClientRequest, OutgoingHttpRequest, WsMessageType,
     },
     print_to_terminal,
@@ -175,7 +175,7 @@ fn handle_api_request(
                 bot.session_id = "".to_string();
 
                 // Send a close message to http_client
-                close_ws_connection(our.node.clone(), bot.ws_client_channel)?;
+                close_ws_connection(bot.ws_client_channel)?;
 
                 state.bots.remove(&bot_id);
                 // set_state(&serde_json::to_vec(state)?);
@@ -300,7 +300,7 @@ fn connect_gateway(
             gateway_url, GATEWAY_PARAMS,
         ),
     );
-    open_ws_connection_and_await(
+    open_ws_connection(
         our.node.clone(),
         format!("{}{}", gateway_url, GATEWAY_PARAMS),
         None,
@@ -372,7 +372,6 @@ fn handle_gateway_event(
             };
 
             send_ws_client_push(
-                our.node.clone(),
                 bot.ws_client_channel,
                 WsMessageType::Text,
                 LazyLoadBlob {
@@ -396,7 +395,6 @@ fn handle_gateway_event(
                 };
 
                 send_ws_client_push(
-                    our.node.clone(),
                     bot.ws_client_channel,
                     WsMessageType::Text,
                     LazyLoadBlob {
@@ -448,7 +446,6 @@ fn send_identify(our: &Address, bot: &mut Bot, interval: u64) -> anyhow::Result<
         &format!("discord_api: sending heartbeat to bot: {:?}", bot),
     );
     send_ws_client_push(
-        our.node.clone(),
         bot.ws_client_channel,
         WsMessageType::Text,
         LazyLoadBlob {
@@ -465,7 +462,6 @@ fn send_identify(our: &Address, bot: &mut Bot, interval: u64) -> anyhow::Result<
         &format!("discord_api: sending event to bot: {:?}", send_event),
     );
     send_ws_client_push(
-        our.node.clone(),
         bot.ws_client_channel,
         WsMessageType::Text,
         LazyLoadBlob {
@@ -494,7 +490,6 @@ fn maintain_heartbeat(
 
     if bot.gateway_connection_open {
         send_ws_client_push(
-            our.node.clone(),
             bot.ws_client_channel,
             WsMessageType::Text,
             LazyLoadBlob {
