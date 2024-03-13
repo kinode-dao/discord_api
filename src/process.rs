@@ -290,7 +290,7 @@ fn handle_websocket_client_message(
                     .unwrap_or(state.gateway_url.clone()),
             )?;
             // // set_state(&serde_json::to_vec(state)?);
-            */ 
+            */
         }
     }
 

@@ -858,9 +858,7 @@ pub fn parse_gateway_blob(
             };
             GatewayReceiveEvent::PresenceUpdate(data)
         }
-        GatewayEventType::Reconnect => {
-            GatewayReceiveEvent::Reconnect
-        }
+        GatewayEventType::Reconnect => GatewayReceiveEvent::Reconnect,
         GatewayEventType::StageInstanceCreate => {
             let data = match serde_json::from_value::<StageInstance>(payload.d.clone()) {
                 Ok(data) => data,
