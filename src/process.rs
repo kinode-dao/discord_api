@@ -272,7 +272,11 @@ fn handle_websocket_client_message(
                 return Ok(());
             };
 
-            // // Reopen connection if closed, also clear current timers and set_state again
+            /*
+
+            Maybe don't reopen connection?...
+
+            // Reopen connection if closed, also clear current timers and set_state again
             bot.gateway_connection_open = false;
             bot.heartbeat_interval = 0;
             bot.heartbeat_sequence = 0;
@@ -286,6 +290,7 @@ fn handle_websocket_client_message(
                     .unwrap_or(state.gateway_url.clone()),
             )?;
             // // set_state(&serde_json::to_vec(state)?);
+            */ 
         }
     }
 
@@ -383,6 +388,9 @@ fn handle_gateway_event(
                     bytes: send_event.to_json_bytes(),
                 },
             );
+        }
+        GatewayReceiveEvent::Resumed => {
+            print_to_terminal(0, "discord_api: session successfully resumed!");
         }
         GatewayReceiveEvent::InvalidSession(resumable) => {
             print_to_terminal(

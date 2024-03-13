@@ -294,6 +294,7 @@ pub enum GatewayEventType {
     MessageReactionRemoveAll,
     MessageReactionRemoveEmoji,
     PresenceUpdate,
+    Reconnect,
     StageInstanceCreate,
     StageInstanceUpdate,
     StageInstanceDelete,
