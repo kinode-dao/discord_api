@@ -278,7 +278,13 @@ fn handle_websocket_client_message(
             bot.heartbeat_sequence = 0;
             bot.session_id = "".to_string();
 
-            connect_gateway(our, &bot.ws_client_channel, bot.resume_gateway_url.clone().unwrap_or(state.gateway_url.clone()))?;
+            connect_gateway(
+                our,
+                &bot.ws_client_channel,
+                bot.resume_gateway_url
+                    .clone()
+                    .unwrap_or(state.gateway_url.clone()),
+            )?;
             // // set_state(&serde_json::to_vec(state)?);
         }
     }
