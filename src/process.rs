@@ -272,25 +272,20 @@ fn handle_websocket_client_message(
                 return Ok(());
             };
 
-            /*
+            // clear current timers and set_state again
+            // bot.gateway_connection_open = false;
+            // bot.heartbeat_interval = 0;
+            // bot.heartbeat_sequence = 0;
+            // bot.session_id = "".to_string();
 
-            Maybe don't reopen connection?...
-
-            // Reopen connection if closed, also clear current timers and set_state again
-            bot.gateway_connection_open = false;
-            bot.heartbeat_interval = 0;
-            bot.heartbeat_sequence = 0;
-            bot.session_id = "".to_string();
-
-            connect_gateway(
-                our,
-                &bot.ws_client_channel,
-                bot.resume_gateway_url
-                    .clone()
-                    .unwrap_or(state.gateway_url.clone()),
-            )?;
+            // connect_gateway(
+            //     our,
+            //     &bot.ws_client_channel,
+            //     bot.resume_gateway_url
+            //         .clone()
+            //         .unwrap_or(state.gateway_url.clone()),
+            // )?;
             // // set_state(&serde_json::to_vec(state)?);
-            */
         }
     }
 
@@ -333,10 +328,6 @@ fn handle_gateway_event(
     match event {
         GatewayReceiveEvent::Hello(hello) => {
             print_to_terminal(0, &format!("discord_api: HELLO {:?}", hello));
-            if bot.gateway_connection_open {
-                print_to_terminal(0, "discord_api: already connected");
-                return Ok(());
-            }
             if let Some(resume_url) = bot.resume_gateway_url.clone() {
                 print_to_terminal(
                     0,
@@ -394,7 +385,7 @@ fn handle_gateway_event(
             );
         }
         GatewayReceiveEvent::Resumed => {
-            print_to_terminal(0, "discord_api: session successfully resumed!");
+            print_to_terminal(0, "discord_api: RESUMED - session successfully resumed!");
         }
         GatewayReceiveEvent::InvalidSession(resumable) => {
             print_to_terminal(
