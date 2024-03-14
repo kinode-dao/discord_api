@@ -333,6 +333,10 @@ fn handle_gateway_event(
     match event {
         GatewayReceiveEvent::Hello(hello) => {
             print_to_terminal(0, &format!("discord_api: HELLO {:?}", hello));
+            if bot.gateway_connection_open {
+                print_to_terminal(0, "discord_api: already connected");
+                return Ok(());
+            }
             if let Some(resume_url) = bot.resume_gateway_url.clone() {
                 print_to_terminal(
                     0,
