@@ -275,18 +275,21 @@ fn handle_websocket_client_message(
             };
 
             // clear current timers and set_state again
-            // bot.gateway_connection_open = false;
-            // bot.heartbeat_interval = 0;
-            // bot.heartbeat_sequence = 0;
-            // bot.session_id = "".to_string();
+            bot.gateway_connection_open = false;
+            bot.heartbeat_interval = 0;
+            bot.heartbeat_sequence = 0;
+            bot.session_id = "".to_string();
 
-            // connect_gateway(
-            //     our,
-            //     &bot.ws_client_channel,
-            //     bot.resume_gateway_url
-            //         .clone()
-            //         .unwrap_or(state.gateway_url.clone()),
-            // )?;
+            if !bot.reconnecting {
+                bot.reconnecting = true;
+                connect_gateway(
+                    our,
+                    &bot.ws_client_channel,
+                    bot.resume_gateway_url
+                        .clone()
+                        .unwrap_or(state.gateway_url.clone()),
+                )?;
+            }
             // // set_state(&serde_json::to_vec(state)?);
         }
     }
@@ -331,12 +334,12 @@ fn handle_gateway_event(
         GatewayReceiveEvent::Hello(hello) => {
             print_to_terminal(0, &format!("discord_api: HELLO {:?}", hello));
             if let Some(resume_url) = bot.resume_gateway_url.clone() {
-                if bot.reconnecting {
+                if !bot.reconnecting {
                     print_to_terminal(
                         0,
                         "discord_api: got hello; have resume gateway url; attempting reconnect",
                     );
-                    bot.reconnecting = false;
+                    bot.reconnecting = true;
                     connect_gateway(our, &bot.ws_client_channel, resume_url)?;
                 } else {
                     print_to_terminal(0, "discord_api: got hello; not reconnecting");
