@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 
 use super::types::*;
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub enum GatewayReceiveEvent {
     Hello(Hello),
     Ready(Ready),
