@@ -322,6 +322,44 @@ fn connect_gateway(
     Ok(())
 }
 
+fn resume_connection(
+    our: &Address,
+    event: GatewayReceiveEvent,
+    bot: &mut Bot,
+) -> anyhow::Result<()> {
+    open_ws_connection(
+        format!(
+            "{}{}",
+            bot.resume_gateway_url
+                .clone()
+                .unwrap_or(DISCORD_GATEWAY.to_string()),
+            GATEWAY_PARAMS
+        ),
+        None,
+        bot.ws_client_channel,
+    )?;
+
+    // Immediately send a resume event
+    let send_event = GatewaySendEvent::Resume {
+        token: bot.token.clone(),
+        session_id: bot.session_id.clone(),
+        seq: bot.heartbeat_sequence,
+    };
+
+    send_ws_client_push(
+        bot.ws_client_channel,
+        WsMessageType::Text,
+        LazyLoadBlob {
+            mime: None,
+            bytes: send_event.to_json_bytes(),
+        },
+    );
+
+    bot.reconnecting = false;
+
+    Ok(())
+}
+
 fn handle_gateway_event(
     our: &Address,
     event: GatewayReceiveEvent,
@@ -342,7 +380,8 @@ fn handle_gateway_event(
                     bot.reconnecting = true;
                     connect_gateway(our, &bot.ws_client_channel, resume_url)?;
                 } else {
-                    print_to_terminal(0, "discord_api: got hello; not reconnecting");
+                    print_to_terminal(0, "discord_api: got hello; attempting resume");
+                    resume_connection(our, event, bot)?;
                 }
             } else if let Ok(thing) = send_identify(our, bot, hello.heartbeat_interval) {
                 print_to_terminal(0, "discord_api: identify sent");
@@ -366,33 +405,7 @@ fn handle_gateway_event(
         GatewayReceiveEvent::Reconnect => {
             print_to_terminal(0, &format!("discord_api: RECONNECT"));
             // If we get a reconnect event, we need to open a WS connection to the resume_gateway_url
-            open_ws_connection(
-                format!(
-                    "{}{}",
-                    bot.resume_gateway_url
-                        .clone()
-                        .unwrap_or(DISCORD_GATEWAY.to_string()),
-                    GATEWAY_PARAMS
-                ),
-                None,
-                bot.ws_client_channel,
-            )?;
-
-            // Immediately send a resume event
-            let send_event = GatewaySendEvent::Resume {
-                token: bot.token.clone(),
-                session_id: bot.session_id.clone(),
-                seq: bot.heartbeat_sequence,
-            };
-
-            send_ws_client_push(
-                bot.ws_client_channel,
-                WsMessageType::Text,
-                LazyLoadBlob {
-                    mime: None,
-                    bytes: send_event.to_json_bytes(),
-                },
-            );
+            resume_connection(our, event, bot)?;
         }
         GatewayReceiveEvent::Resumed => {
             print_to_terminal(0, "discord_api: RESUMED - session successfully resumed!");
