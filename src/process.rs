@@ -322,11 +322,7 @@ fn connect_gateway(
     Ok(())
 }
 
-fn resume_connection(
-    our: &Address,
-    event: GatewayReceiveEvent,
-    bot: &mut Bot,
-) -> anyhow::Result<()> {
+fn resume_connection(our: &Address, bot: &mut Bot) -> anyhow::Result<()> {
     open_ws_connection(
         format!(
             "{}{}",
@@ -381,7 +377,7 @@ fn handle_gateway_event(
                     connect_gateway(our, &bot.ws_client_channel, resume_url)?;
                 } else {
                     print_to_terminal(0, "discord_api: got hello; attempting resume");
-                    resume_connection(our, event.clone(), bot)?;
+                    resume_connection(our, bot)?;
                 }
             } else if let Ok(thing) = send_identify(our, bot, hello.heartbeat_interval) {
                 print_to_terminal(0, "discord_api: identify sent");
@@ -405,7 +401,7 @@ fn handle_gateway_event(
         GatewayReceiveEvent::Reconnect => {
             print_to_terminal(0, &format!("discord_api: RECONNECT"));
             // If we get a reconnect event, we need to open a WS connection to the resume_gateway_url
-            resume_connection(our, event.clone(), bot)?;
+            resume_connection(our, bot)?;
         }
         GatewayReceiveEvent::Resumed => {
             print_to_terminal(0, "discord_api: RESUMED - session successfully resumed!");
