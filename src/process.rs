@@ -34,6 +34,7 @@ pub struct Bot {
     pub parent: Address,
     pub gateway_connection_open: bool,
     pub resume_gateway_url: Option<String>,
+    pub reconnecting: bool,
     pub token: String,
     pub heartbeat_interval: u64,
     pub heartbeat_sequence: u64,
@@ -115,6 +116,7 @@ fn handle_api_request(
                 parent: source.clone(),
                 token: bot_id.token.clone(),
                 resume_gateway_url: None,
+                reconnecting: false,
                 intents: bot_id.intents.clone(),
                 gateway_connection_open: false,
                 heartbeat_interval: 0,
@@ -329,11 +331,16 @@ fn handle_gateway_event(
         GatewayReceiveEvent::Hello(hello) => {
             print_to_terminal(0, &format!("discord_api: HELLO {:?}", hello));
             if let Some(resume_url) = bot.resume_gateway_url.clone() {
-                print_to_terminal(
-                    0,
-                    "discord_api: have resume gateway url; attempting reconnect",
-                );
-                connect_gateway(our, &bot.ws_client_channel, resume_url)?;
+                if bot.reconnecting {
+                    print_to_terminal(
+                        0,
+                        "discord_api: got hello; have resume gateway url; attempting reconnect",
+                    );
+                    bot.reconnecting = false;
+                    connect_gateway(our, &bot.ws_client_channel, resume_url)?;
+                } else {
+                    print_to_terminal(0, "discord_api: got hello; not reconnecting");
+                }
             } else if let Ok(thing) = send_identify(our, bot, hello.heartbeat_interval) {
                 print_to_terminal(0, "discord_api: identify sent");
             } else {
